@@ -1,3 +1,19 @@
+/**
+ * Script para automatizar a extração de dados do Google Ads e exportá-los para o Google Sheets.
+ * 
+ * Funcionalidades:
+ * - Coleta dados de campanhas do Google Ads.
+ * - Exporta os dados para uma planilha do Google Sheets.
+ * - Executa automaticamente no primeiro dia de cada mês.
+ * 
+ * Autor: Aline Raulino
+ * Data: [Data de criação]
+ */
+
+// Configurações
+var SHEET_NAME = "Relatório Google Ads - Exemplo";
+var SPREADSHEET_ID = 'SUA_PLANILHA_DE_EXEMPLO_ID'; // Substitua pelo ID da sua planilha
+
 function main() {
     // Define o intervalo de datas do mês anterior
     var startDate = getFirstDayOfLastMonth();  // Primeiro dia do mês anterior
@@ -11,14 +27,12 @@ function main() {
         "WHERE Date >= '" + startDate + "' AND Date <= '" + endDate + "'"
     );
 
-    // Nome da planilha e ID do arquivo (substitua por um ID de teste ou exemplo)
-    var sheetName = "Relatório Google Ads - Exemplo";
-    var file = SpreadsheetApp.openById('SUA_PLANILHA_DE_EXEMPLO_ID');  // Substitua pelo ID de uma planilha de teste
-    var sheet = file.getSheetByName(sheetName);
+    var file = SpreadsheetApp.openById(SPREADSHEET_ID);  
+    var sheet = file.getSheetByName(SHEET_NAME);
 
     // Se a planilha não existir, cria uma nova com cabeçalhos
     if (!sheet) {
-        sheet = file.insertSheet(sheetName);
+        sheet = file.insertSheet(SHEET_NAME);
         sheet.appendRow([  // Cabeçalhos
             "Data do Relatório", "Campanha", "Status de campanha", "Dia", "Dispositivo", 
             "Cliques", "Impressões", "CTR", "CPC méd.", "Custo", 
@@ -28,9 +42,13 @@ function main() {
 
     // Itera sobre as linhas do relatório e adiciona os dados na planilha
     var rows = report.rows(); 
+    if (!rows.hasNext()) {
+        Logger.log("Nenhum dado encontrado para o período especificado.");
+        return;
+    }
+
     while (rows.hasNext()) {
         var row = rows.next(); 
-
         sheet.appendRow([
             startDate,  // Data do relatório (usando o primeiro dia do mês anterior)
             row["CampaignName"], 
