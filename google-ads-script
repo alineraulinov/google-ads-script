@@ -1,0 +1,83 @@
+function main() {
+    // Define o intervalo de datas do mês anterior
+    var startDate = getFirstDayOfLastMonth();  // Primeiro dia do mês anterior
+    var endDate = getLastDayOfLastMonth();    // Último dia do mês anterior
+
+    // Cria o relatório para o intervalo de datas específico com as métricas desejadas
+    var report = AdsApp.report(
+        "SELECT CampaignName, CampaignStatus, DayOfWeek, Device, " +
+        "Clicks, Impressions, Ctr, AverageCpc, Cost, Conversions, ViewThroughConversions, ConversionRate " +
+        "FROM CAMPAIGN_PERFORMANCE_REPORT " +
+        "WHERE Date >= '" + startDate + "' AND Date <= '" + endDate + "'"
+    );
+
+    // Nome da planilha e ID do arquivo (substitua por um ID de teste ou exemplo)
+    var sheetName = "Relatório Google Ads - Exemplo";
+    var file = SpreadsheetApp.openById('SUA_PLANILHA_DE_EXEMPLO_ID');  // Substitua pelo ID de uma planilha de teste
+    var sheet = file.getSheetByName(sheetName);
+
+    // Se a planilha não existir, cria uma nova com cabeçalhos
+    if (!sheet) {
+        sheet = file.insertSheet(sheetName);
+        sheet.appendRow([  // Cabeçalhos
+            "Data do Relatório", "Campanha", "Status de campanha", "Dia", "Dispositivo", 
+            "Cliques", "Impressões", "CTR", "CPC méd.", "Custo", 
+            "Conversões", "Conv. de visualização", "Taxa de conv."
+        ]);
+    }
+
+    // Itera sobre as linhas do relatório e adiciona os dados na planilha
+    var rows = report.rows(); 
+    while (rows.hasNext()) {
+        var row = rows.next(); 
+
+        sheet.appendRow([
+            startDate,  // Data do relatório (usando o primeiro dia do mês anterior)
+            row["CampaignName"], 
+            row["CampaignStatus"], 
+            row["DayOfWeek"], 
+            row["Device"], 
+            row["Clicks"], 
+            row["Impressions"], 
+            row["Ctr"], 
+            row["AverageCpc"] / 1e6,  // Converte de micros para moeda normal
+            row["Cost"] / 1e6,        // Converte de micros para moeda normal
+            row["Conversions"], 
+            row["ViewThroughConversions"], 
+            row["ConversionRate"]
+        ]); 
+    }
+
+    // Loga o link da planilha para referência
+    var sheetUrl = "https://docs.google.com/spreadsheets/d/" + file.getId(); 
+    Logger.log("Dados exportados para o Planilhas Google: " + sheetUrl); 
+}
+
+// Função para obter o primeiro dia do mês anterior
+function getFirstDayOfLastMonth() {
+    var today = new Date();
+    var firstDay = new Date(today.getFullYear(), today.getMonth() - 1, 1); // Primeiro dia do mês anterior
+    var day = firstDay.getDate();
+    var month = firstDay.getMonth() + 1; // Mês (em formato 1-12)
+    var year = firstDay.getFullYear();
+    return year + "-" + ("0" + month).slice(-2) + "-" + ("0" + day).slice(-2); // Retorna no formato YYYY-MM-DD
+}
+
+// Função para obter o último dia do mês anterior
+function getLastDayOfLastMonth() {
+    var today = new Date();
+    var lastDay = new Date(today.getFullYear(), today.getMonth(), 0); // Último dia do mês anterior
+    var day = lastDay.getDate();
+    var month = lastDay.getMonth() + 1; // Mês (em formato 1-12)
+    var year = lastDay.getFullYear();
+    return year + "-" + ("0" + month).slice(-2) + "-" + ("0" + day).slice(-2); // Retorna no formato YYYY-MM-DD
+}
+
+// Função para criar um gatilho mensal (executa o script no primeiro dia de cada mês)
+function createMonthlyTrigger() {
+  ScriptApp.newTrigger("main") 
+    .timeBased()
+    .onMonthDay(1) 
+    .atHour(0)
+    .create();
+}
