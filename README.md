@@ -23,6 +23,13 @@ Este projeto foi criado para automatizar a extração de dados do Google Ads e e
 2. Execute o script no **Google Apps Script**.
 3. Pronto! Os dados serão exportados automaticamente.
 
+## Exemplo de saída no Google Sheets
+
+| Data do Relatório | Campanha       | Status de campanha | Dia      | Dispositivo | Cliques | Impressões | CTR   | CPC méd. | Custo  | Conversões | Conv. de visualização | Taxa de conv. |
+|-------------------|----------------|--------------------|----------|-------------|---------|------------|-------|----------|--------|------------|-----------------------|---------------|
+| 2023-09-01        | Campanha 1     | Ativa              | Segunda  | Mobile      | 150     | 5000       | 3.0%  | 0.50     | 75.00  | 10         | 2                     | 6.67%         |
+| 2023-09-01        | Campanha 2     | Pausada            | Terça    | Desktop     | 200     | 8000       | 2.5%  | 0.60     | 120.00 | 15         | 3                     | 7.50%         |
+
 ## O que aprendi com esse projeto?
 - Como trabalhar com **APIs** e scripts.
 - Como **automatizar tarefas repetitivas**.
