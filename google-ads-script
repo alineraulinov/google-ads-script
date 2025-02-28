@@ -7,12 +7,11 @@
  * - Executa automaticamente no primeiro dia de cada mês.
  * 
  * Autor: Aline Raulino
- * Data: [Data de criação]
  */
 
 // Configurações
 var SHEET_NAME = "Relatório Google Ads - Exemplo";
-var SPREADSHEET_ID = 'SUA_PLANILHA_DE_EXEMPLO_ID'; // Substitua pelo ID da sua planilha
+var SPREADSHEET_ID = 'ID_PLANILHA'; // Substitua pelo ID da sua planilha
 
 function main() {
     // Define o intervalo de datas do mês anterior
